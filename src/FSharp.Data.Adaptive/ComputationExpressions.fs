@@ -12,6 +12,12 @@ module ComputationExpressions =
         member inline x.Bind(value: aval<'T1>, mapping: 'T1 -> aval<'T2>) =
             AVal.bind mapping value
 
+        member inline x.Bind2(value1: aval<'T1>, value2: aval<'T2>, mapping: 'T1 -> 'T2 -> aval<'T3>) =
+            AVal.bind2 mapping value1 value2
+
+        member inline x.Apply(value: aval<'T1>, mapping: aval<'T1 -> 'T2>) : aval<'T2> =
+            AVal.apply mapping value
+
         member inline x.Return(value: 'T) =
             AVal.constant value
 
@@ -41,6 +47,9 @@ module ComputationExpressions =
             
         member inline x.Bind(value: aval<'T1>, mapping: 'T1 -> aset<'T2>) =
             ASet.bind mapping value
+            
+        member inline x.Bind2(value1: aval<'T1>, value2: aval<'T2>, mapping: 'T1 -> 'T2 -> aset<'T3>) =
+            ASet.bind2 mapping value1 value2
             
         member inline x.For(elements: aval<#seq<'T1>>, mapping: 'T1 -> aset<'T2>) =
             elements 
@@ -81,10 +90,11 @@ module ComputationExpressions =
         member inline x.YieldFrom(values: 'T[]) = AList.ofArray values
         member inline x.YieldFrom(values: IndexList<'T>) = AList.ofIndexList values
 
-        
-    
         member inline x.Bind(value: aval<'T1>, mapping: 'T1 -> alist<'T2>) =
             AList.bind mapping value
+
+        member inline x.Bind2(value1: aval<'T1>, value2: aval<'T2>, mapping: 'T1 -> 'T2 -> alist<'T3>) =
+            AList.bind2 mapping value1 value2
 
         member inline x.For(elements: alist<'T1>, mapping: 'T1 -> alist<'T2>) =
             AList.collect mapping elements
@@ -133,6 +143,9 @@ module ComputationExpressions =
         member inline x.Bind(value: aval<'T>, mapping: 'T -> amap<'Key, 'Value>) = AMap.bind mapping value
         member inline x.Delay(value: unit -> amap<'Key, 'Value>) = value()
         member inline x.Combine(l: amap<'Key, 'Value>, r: amap<'Key, 'Value>) = AMap.union l r
+            
+        member inline x.Bind2(value1: aval<'T1>, value2: aval<'T2>, mapping: 'T1 -> 'T2 -> amap<'Key, 'Value>) =
+            AMap.bind2 mapping value1 value2
             
     /// ComputationExpression builder for aval.
     let aval = AValBuilder()

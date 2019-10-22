@@ -631,6 +631,19 @@ module ASet =
         else
             create (fun () -> BindReader(value, mapping))
 
+    /// Adaptively maps over the given aval and returns the resulting set.
+    let bind2 (mapping : 'A1 -> 'A2 -> aset<'B>) (value1 : aval<'A1>) (value2 : aval<'A2>) =
+        if value1.IsConstant && value2.IsConstant then
+            mapping (AVal.force value1) (AVal.force value2)
+        elif value1.IsConstant then
+            let v1 = AVal.force value1
+            bind (fun v2 -> mapping v1 v2) value2
+        elif value2.IsConstant then
+            let v2 = AVal.force value2
+            bind (fun v1 -> mapping v1 v2) value1
+        else
+            bind (fun (v1, v2) -> mapping v1 v2) (AVal.map2 (fun v1 v2 -> (v1, v2)) value1 value2)
+
     /// Adaptively flattens the set of adaptive avals.
     let flattenA (set : aset<aval<'A>>) =
         if set.IsConstant then

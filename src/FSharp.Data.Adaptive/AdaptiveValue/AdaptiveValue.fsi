@@ -80,3 +80,8 @@ module AVal =
     /// Creates a custom adaptive value using the given computation.
     /// Callers are responsible for removing inputs that are no longer needed.
     val custom : compute : (AdaptiveToken -> 'T) -> aval<'T>
+
+    /// Returns a new adaptive value that adaptively applies the mapping function to the given 
+    /// adaptive inputs.
+    val apply : mapping : aval<'T1 -> 'T2> -> value : aval<'T1> -> aval<'T2>
+

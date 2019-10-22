@@ -337,5 +337,20 @@ module AVal =
         else
             Bind2Val<'T1, 'T2, 'T3>(mapping, value1, value2) :> aval<_>       
 
+    let apply (mapping: aval<'T1 -> 'T2>) (value: aval<'T1>) : aval<'T2> =
+        if value.IsConstant && mapping.IsConstant then
+            constant ((force mapping) (force value))
+
+        elif value.IsConstant then
+            let a = force value
+            map (fun f -> f a) mapping
+
+        elif mapping.IsConstant then
+            let f = force mapping
+            map f value
+
+        else
+            Map2Val<('T1 -> 'T2), 'T1, 'T2>((fun f a -> f a), mapping, value) :> aval<_>       
+
     let custom (compute: AdaptiveToken -> 'T) =
         CustomVal compute :> aval<_>

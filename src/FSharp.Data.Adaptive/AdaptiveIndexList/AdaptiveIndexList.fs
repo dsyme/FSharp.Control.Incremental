@@ -619,6 +619,19 @@ module AList =
         else
             create (fun () -> BindReader(value, mapping))
 
+    /// Adaptively maps over the given aval and returns the resulting list.
+    let bind2 (mapping: 'T1 -> 'T2 -> alist<'T3>) (value1: aval<'T1>) (value2: aval<'T2>) =
+        if value1.IsConstant && value2.IsConstant then
+            mapping (AVal.force value1) (AVal.force value2)
+        elif value1.IsConstant then
+            let v1 = AVal.force value1
+            bind (fun v2 -> mapping v1 v2) value2
+        elif value2.IsConstant then
+            let v2 = AVal.force value2
+            bind (fun v1 -> mapping v1 v2) value1
+        else
+            bind (fun (v1, v2) -> mapping v1 v2) (AVal.map2 (fun v1 v2 -> (v1, v2)) value1 value2)
+
     /// Sorts the list using the keys given by projection.
     /// Note that the sorting is stable.
     let sortByi (projection : Index -> 'T1 -> 'T2) (list : alist<'T1>) =
