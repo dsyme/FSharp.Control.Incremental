@@ -15,9 +15,6 @@ module ComputationExpressions =
         member inline x.Bind2(value1: aval<'T1>, value2: aval<'T2>, mapping: 'T1 -> 'T2 -> aval<'T3>) =
             AVal.bind2 mapping value1 value2
 
-        member inline x.Apply(value: aval<'T1>, mapping: aval<'T1 -> 'T2>) : aval<'T2> =
-            AVal.apply mapping value
-
         member inline x.Return(value: 'T) =
             AVal.constant value
 
