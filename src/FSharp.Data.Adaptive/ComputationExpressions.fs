@@ -87,8 +87,8 @@ module ComputationExpressions =
         member inline x.YieldFrom(values: 'T[]) = AList.ofArray values
         member inline x.YieldFrom(values: IndexList<'T>) = AList.ofIndexList values
 
-
-
+        
+    
         member inline x.Bind(value: aval<'T1>, mapping: 'T1 -> alist<'T2>) =
             AList.bind mapping value
 
